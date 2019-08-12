@@ -8,10 +8,16 @@ class PokemonCollection extends React.Component {
     pokemons: []
   }
 
+  filterPokemons = (pokemons) => {
+    let filterList = pokemons.filter(pokemon => pokemon.name.includes(this.props.search));
+    return filterList.length > 0 ? filterList : pokemons
+  }
+
   render() {
+    console.log(this.props.search)
     return (
       <Card.Group itemsPerRow={6}>
-				{this.state.pokemons.map(pokemon => <PokemonCard pokemon={pokemon} key={pokemon.id}/>)}
+				{this.filterPokemons(this.state.pokemons).map(pokemon => <PokemonCard pokemon={pokemon} key={pokemon.id}/>)}
       </Card.Group>
     )
   }
