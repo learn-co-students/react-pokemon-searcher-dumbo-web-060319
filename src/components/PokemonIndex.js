@@ -7,40 +7,55 @@ import _ from 'lodash'
 const JSON_URL = 'http://localhost:3000/pokemon'
 
 class PokemonIndex extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      pokemonData: []
-    };
+  state = {
+    pokemonData: [],
+    query: ''
   }
 
   componentDidMount() {
     fetch(JSON_URL)
-    .then(res => res.json())
-    .then(data => this.setState({
-      pokemonData: data,
-      query: ''
+      .then(res => res.json())
+      .then(data => this.setState({
+        pokemonData: data
     }))
   }
 
-  handleSearchChange = () => {
-    return  _.debounce((e, data) => this.setState({
-    query: data.value
-  }), 200)}
+  handleSearchChange = (e, { value }) => {
+    this.setState({
+      query: value
+    });
+  }
+
+  toggleImage = pokemon => {
+    const col = this.state.pokemonData
+    const i = col.indexOf(pokemon)
+    this.setState({
+      pokemonData: [
+        ...col.slice(0, i),
+        { ...pokemon, isClicked: !pokemon.isClicked },
+        ...col.slice(i + 1)
+      ]
+    })
+  }
+
+  addPokemon = pokemon => {
+    this.setState({ pokemonData: [...this.state.pokemonData, pokemon] })
+  }
 
   render() {
+    const filteredPokemon = this.state.pokemonData.filter(p =>
+      p.name.includes(this.state.query))
     return (
       <div>
-        <h1>Pokemon Searcher</h1>
         <br />
         <Search
-          onSearchChange={this.handleSearchChange()}
+          onSearchChange={_.debounce(this.handleSearchChange, 200)}
           showNoResults={false}
         />
         <br />
-        <PokemonCollection pokemonData={this.state.pokemonData} />
+        <PokemonCollection filteredPokemon={filteredPokemon} toggleImage={this.toggleImage} />
         <br />
-        <PokemonForm />
+        <PokemonForm addPokemon={this.addPokemon} />
       </div>
     )
   }
