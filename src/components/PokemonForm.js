@@ -6,18 +6,45 @@ class PokemonForm extends React.Component {
     super()
 
     this.state = {
-      name: '',
-      hp: '',
-      frontUrl: '',
-      backUrl: ''
+    name: '',
+    stats: [
+      {
+        value: 0,
+        name: "hp"
+      }
+    ],
+    sprites: {
+      front: "",
+      back: ""
+    },
     }
   }
 
+  clickEvent = (event) =>{
+    const {name,hp,frontUrl,backUrl} = event.target
+    this.setState({
+      name: name.value,
+      stats:[
+        { value : hp.value,
+        name: "hp"  }
+      ],
+      sprites: {
+        front:frontUrl.value,
+        back: backUrl.value
+      }
+    }),
+    setTimeout( () => {
+      console.log(this.props.newPokemon(this.state))
+    } , 500);
+}
+
+
   render() {
+    console.log(this.state)
     return (
       <div>
         <h3>Add a Pokemon!</h3>
-        <Form onSubmit={this.handleSubmit}>
+        <Form onSubmit={this.clickEvent}>
           <Form.Group widths="equal">
             <Form.Input fluid label="Name" placeholder="Name" name="name" />
             <Form.Input fluid label="hp" placeholder="hp" name="hp" />
